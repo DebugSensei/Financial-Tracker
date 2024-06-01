@@ -1,0 +1,13 @@
+package api
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+// SetupRouter initializes the API routes
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
+	r.POST("/transaction", AddTransaction)
+	r.GET("/balance", GetBalance)
+	return r
+}
