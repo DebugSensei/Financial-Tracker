@@ -2,9 +2,12 @@ package main
 
 import (
 	"financial_tracker/api"
+	"financial_tracker/db"
+	"log"
 )
 
 func main() {
+	db.InitDB()
 	r := api.SetupRouter()
-	r.Run(":8080")
+	log.Fatal(r.Run(":8080"))
 }

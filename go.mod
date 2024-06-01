@@ -2,7 +2,10 @@ module financial_tracker
 
 go 1.18
 
-require github.com/gin-gonic/gin v1.7.7
+require (
+	github.com/gin-gonic/gin v1.7.7
+	github.com/lib/pq v1.10.9
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

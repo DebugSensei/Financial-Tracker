@@ -1,15 +1,13 @@
 package api
 
 import (
+	"financial_tracker/db"
 	"financial_tracker/models"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
-
-// Temporary storage for transactions
-var transactions []models.Transaction
 
 // AddTransaction handles adding a new transaction
 func AddTransaction(c *gin.Context) {
@@ -19,20 +17,23 @@ func AddTransaction(c *gin.Context) {
 		return
 	}
 	transaction.Date = time.Now()
-	// Add transaction to storage
-	transactions = append(transactions, transaction)
+	query := `INSERT INTO transactions (date, amount, currency, type, category_id) VALUES ($1, $2, $3, $4, $5)`
+	_, err := db.DB.Exec(query, transaction.Date, transaction.Amount, transaction.Currency, transaction.Type, transaction.CategoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, transaction)
 }
 
 // GetBalance handles fetching the balance at a specific time or current time
 func GetBalance(c *gin.Context) {
-	balance := 0.0
-	for _, transaction := range transactions {
-		if transaction.Type == "income" {
-			balance += transaction.Amount
-		} else if transaction.Type == "expense" {
-			balance -= transaction.Amount
-		}
+	var balance float64
+	query := `SELECT SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) FROM transactions`
+	err := db.DB.QueryRow(query).Scan(&balance)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"balance": balance})
 }
