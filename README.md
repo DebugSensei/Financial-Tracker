@@ -72,7 +72,7 @@ PowerShell example:
 Invoke-WebRequest -Uri “http://localhost:8080/balance” -Method GET
 ```
 The response will be in json format:
-`` ``json
+```json
 {
     “balance”: 201.00
 }
