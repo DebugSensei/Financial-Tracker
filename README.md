@@ -47,8 +47,8 @@ To add a transaction, send a POST request to /transaction with the request body 
 }
 ```
 
-Example of use with PowerShell:
-````bash
+### Example of use with PowerShell:
+```bash
 $headers = @{
     “Content-Type” = “application/json”
 }
