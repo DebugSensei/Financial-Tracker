@@ -76,4 +76,5 @@ The response will be in json format:
 {
     “balance”: 201.00
 }
+
 ```
