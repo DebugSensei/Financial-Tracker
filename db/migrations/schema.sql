@@ -12,3 +12,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     type VARCHAR(10) NOT NULL,
     category_id INTEGER NOT NULL
 );
+
+INSERT INTO categories (name) VALUES ('Shopping'), ('Groceries'), ('Utilities'), ('Entertainment');
+
