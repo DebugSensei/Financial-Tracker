@@ -40,7 +40,7 @@ To add a transaction, send a POST request to /transaction with the request body 
 ```bash
 {
     “date”: “2023-05-01T12:00:00Z”,
-    { “amount”: 100.50,
+    “amount”: 100.50,
     “currency”: “USD”,
     “type”: “income”,
     “category_id”: 1
