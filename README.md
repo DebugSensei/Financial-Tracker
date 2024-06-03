@@ -62,7 +62,7 @@ curl -X GET "http://localhost:8080/balance"
 ```
 The response will be in json format:
 ```bash
-{“balance”: 200.00}
+{“balance”: 201.00}
 ```
 
 ### Example of use with PowerShell (Income):
@@ -103,5 +103,9 @@ To get the current balance, send a GET request to /balance.
 PowerShell example:
 ```bash
 Invoke-WebRequest -Uri “http://localhost:8080/balance” -Method GET
+```
+The response will be in json format:
+```bash
+{“balance”: 201.00}
 ```
 
