@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	db.InitDB()
+	db.ConnectDB()
+	defer db.DB.Close()
+
 	r := api.SetupRouter()
 	log.Fatal(r.Run(":8080"))
 }
