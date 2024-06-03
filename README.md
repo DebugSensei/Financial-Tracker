@@ -40,14 +40,32 @@ To add a transaction, send a POST request to /transaction with the request body 
 ```bash
 {
     “date”: “2023-05-01T12:00:00Z”,
-    “amount”: 100.50,
+    “amount”: 100,
     “currency”: “USD”,
     “type”: “income”,
     “category_id”: 1
 }
 ```
+### Example of use with CMD (Income):
+```bash
+curl -X POST "http://localhost:8080/transaction" -H "Content-Type: application/json" -d "{ \"date\": \"2024-05-01T12:19:18Z\", \"amount\": 100, \"currency\": \"USD\", \"type\": \"income\", \"category_id\": 1 }"
+```
+### Example of use with CMD (Expense):
+```bash
+curl -X POST "http://localhost:8080/transaction" -H "Content-Type: application/json" -d "{ \"date\": \"2023-05-01T12:00:00Z\", \"amount\": 50.00, \"currency\": \"USD\", \"type\": \"expense\", \"category_id\": 2 }"
+```
+### Receive Balance
+To get the current balance, send a GET request to /balance.
+CMD example(check balance):
+```bash
+curl -X GET "http://localhost:8080/balance"
+```
+The response will be in json format:
+```bash
+{“balance”: 200.00}
+```
 
-### Example of use with PowerShell:
+### Example of use with PowerShell (Income):
 ```bash
 $headers = @{
     “Content-Type” = “application/json”
@@ -55,7 +73,7 @@ $headers = @{
 
 $body = @{
     date = “2023-05-01T12:00:00Z”
-    amount = 100.50
+    amount = 100
     currency = “USD”
     type = “income”
     category_id = 1
@@ -63,18 +81,27 @@ $body = @{
 
 Invoke-WebRequest -Uri “http://localhost:8080/transaction” -Method POST -Headers $headers -Body $body
 ```
+### Example of use with PowerShell (Expense):
+```bash
+$headers = @{
+    "Content-Type" = "application/json"
+}
+
+$body = @{
+    date = "2023-05-01T12:00:00Z"
+    amount = 50.00
+    currency = "USD"
+    type = "expense"
+    category_id = 2
+} | ConvertTo-Json
+
+Invoke-WebRequest -Uri "http://localhost:8080/transaction" -Method POST -Headers $headers -Body $body
+```
 
 ### Receive Balance
 To get the current balance, send a GET request to /balance.
 PowerShell example:
-
 ```bash
 Invoke-WebRequest -Uri “http://localhost:8080/balance” -Method GET
 ```
-The response will be in json format:
-```bash
-{
-    “balance”: 201.00
-}
 
-```
