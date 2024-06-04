@@ -62,7 +62,7 @@ curl -X GET "http://localhost:8080/balance"
 ```
 The response will be in json format:
 ```bash
-{“balance”: 201.00}
+{“balance”: 200.00}
 ```
 
 ### Example of use with PowerShell (Income):
@@ -106,6 +106,6 @@ Invoke-WebRequest -Uri “http://localhost:8080/balance” -Method GET
 ```
 The response will be in json format:
 ```bash
-{“balance”: 201.00}
+{“balance”: 200.00}
 ```
 
