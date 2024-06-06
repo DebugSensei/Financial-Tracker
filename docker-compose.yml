@@ -4,29 +4,30 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: financial_tracker
-    volumes:
-      - db-data:/var/lib/postgresql/data
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "myuser"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U myuser"]
+      interval: 30s
+      timeout: 10s
       retries: 5
+    volumes:
+      - ./db/migrations:/docker-entrypoint-initdb.d
 
   app:
     build: .
+    command: sh -c "sleep 10 && ./main"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: myuser
+      DB_PASSWORD: password
+      DB_NAME: financial_tracker
     ports:
       - "8080:8080"
-    environment:
-      DB_USER: myuser
-      DB_PASSWORD: mypassword
-      DB_NAME: financial_tracker
-      DB_HOST: db
     depends_on:
       db:
         condition: service_healthy
-
-volumes:
-  db-data:

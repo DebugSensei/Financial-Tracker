@@ -9,13 +9,29 @@ Financial Tracker is a Go language web application that allows you to track your
 
 ## Project structure
 
-- `api/handlers.go` - handlers for API requests.
-- `api/router.go` - route configuration for API.
-- `db/db.go` - database initialization.
-- `db/migrations/schema.sql` - database schema.
-- `models/category.go` - model for transaction categories.
-- `models/transaction.go` - model for transactions.
-- `main.go` - the main entry point for the application.
+- `app/application/services` - service layer for handling business logic.
+  - `category_service.go` - service for managing categories.
+  - `transaction_service.go` - service for managing transactions.
+- `app/cmd/api` - main entry point for the application.
+  - `main.go` - the main entry point for the application.
+- `app/infrastructure/db` - database initialization and connection handling.
+  - `postgres.go` - PostgreSQL database initialization.
+- `app/infrastructure/http` - HTTP server setup and route configuration.
+  - `handlers.go` - handlers for API requests.
+  - `router.go` - route configuration for API.
+- `app/interfaces/repository` - repository interfaces for interacting with the database.
+  - `category_repository.go` - repository for managing categories.
+  - `transaction_repository.go` - repository for managing transactions.
+- `app/internal/domain` - domain models and business logic.
+  - `category` - models and logic related to categories.
+    - `category.go` - model for transaction categories.
+    - `transaction.go` - model for transactions.
+  - `transaction` - models and logic related to transactions.
+    - `repository.go` - repository interface for transactions.
+    - `transaction.go` - model for transactions.
+- `db/migrations` - database schema.
+  - `schema.sql` - database schema.
+- `.env` - environment variables.
 - `docker-compose.yml` - Docker Compose settings for running the application and database containers.
 - `Dockerfile` - instructions for building a Docker image of the application.
 
@@ -52,7 +68,7 @@ curl -X POST "http://localhost:8080/transaction" -H "Content-Type: application/j
 ```
 ### Example of use with CMD (Expense):
 ```bash
-curl -X POST "http://localhost:8080/transaction" -H "Content-Type: application/json" -d "{ \"date\": \"2023-05-01T12:00:00Z\", \"amount\": 50.00, \"currency\": \"USD\", \"type\": \"expense\", \"category_id\": 2 }"
+curl -X POST "http://localhost:8080/transaction" -H "Content-Type: application/json" -d "{ \"date\": \"2024-05-01T12:00:00Z\", \"amount\": 50.00, \"currency\": \"USD\", \"type\": \"expense\", \"category_id\": 2 }"
 ```
 ### Receive Balance
 To get the current balance, send a GET request to /balance.

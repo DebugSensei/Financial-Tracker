@@ -1,13 +1,23 @@
+# Use the official Go image as a base image
 FROM golang:1.18-alpine
 
-RUN apk update && apk add postgresql-client
-
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-COPY . .
+# Copy go mod and sum files
+COPY go.mod go.sum ./
 
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod tidy
 
-RUN go build -o main .
+# Copy the source from the current directory to the Working Directory inside the container
+COPY . .
 
-CMD ["sh", "-c", "sleep 10 && PGPASSWORD=$DB_PASSWORD psql -h db -U $DB_USER -d $DB_NAME -f db/migrations/schema.sql && ./main"]
+# Build the Go app
+RUN go build -o main ./app/cmd/api/
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
+
+# Command to run the executable
+CMD ["./main"]

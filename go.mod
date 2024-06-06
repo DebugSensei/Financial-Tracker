@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/joho/godotenv v1.5.1 // Add the missing dependency here
 	github.com/lib/pq v1.10.9
 )
 

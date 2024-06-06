@@ -14,4 +14,3 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 INSERT INTO categories (name) VALUES ('Shopping'), ('Groceries'), ('Utilities'), ('Entertainment') ON CONFLICT (name) DO NOTHING;
-
