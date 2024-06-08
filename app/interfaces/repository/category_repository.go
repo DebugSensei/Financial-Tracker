@@ -2,25 +2,25 @@ package repository
 
 import (
 	"database/sql"
-	"financial_tracker/infrastructure/db"
-	"financial_tracker/internal/domain/category"
+	"financial_tracker/app/internal/domain/category"
 )
 
 type CategoryRepository struct {
 	db *sql.DB
 }
 
-func NewCategoryRepository() *CategoryRepository {
-	return &CategoryRepository{db: db.DB}
+func NewCategoryRepository(db *sql.DB) *CategoryRepository {
+	return &CategoryRepository{db: db}
 }
 
-func (r *CategoryRepository) AddCategory(category category.Category) error {
+func (r *CategoryRepository) AddCategory(cat category.Category) error {
 	query := `INSERT INTO categories (name) VALUES ($1)`
-	_, err := r.db.Exec(query, category.Name)
+	_, err := r.db.Exec(query, cat.Name)
 	return err
 }
 
 func (r *CategoryRepository) GetCategories() ([]category.Category, error) {
+	var categories []category.Category
 	query := `SELECT id, name FROM categories`
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -28,13 +28,12 @@ func (r *CategoryRepository) GetCategories() ([]category.Category, error) {
 	}
 	defer rows.Close()
 
-	var categories []category.Category
 	for rows.Next() {
-		var category category.Category
-		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+		var cat category.Category
+		if err := rows.Scan(&cat.ID, &cat.Name); err != nil {
 			return nil, err
 		}
-		categories = append(categories, category)
+		categories = append(categories, cat)
 	}
 
 	return categories, nil

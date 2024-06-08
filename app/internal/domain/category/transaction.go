@@ -1,6 +1,8 @@
 package transaction
 
-import "time"
+import (
+	"time"
+)
 
 type Transaction struct {
 	ID         int       `json:"id"`
@@ -12,10 +14,9 @@ type Transaction struct {
 }
 
 type TransactionWithCategory struct {
-	ID       int       `json:"id"`
-	Date     time.Time `json:"date"`
-	Amount   float64   `json:"amount"`
-	Currency string    `json:"currency"`
-	Type     string    `json:"type"`
-	Category string    `json:"category"`
+	Date         time.Time `json:"date"`
+	Amount       float64   `json:"amount"`
+	Currency     string    `json:"currency"`
+	Type         string    `json:"type"`
+	CategoryName string    `json:"category_name"`
 }

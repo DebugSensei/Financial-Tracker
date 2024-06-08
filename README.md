@@ -44,11 +44,11 @@ Financial Tracker is a Go language web application that allows you to track your
 
 ### Cloning the repository
 ```bash
-git clone https://github.com/DebugSensei/Financial-Tracker.git
+git clone https://github.com/DebugSensei/financial_tracker.git
 ```
 ### Run
 ```bash
-cd Financial-Tracker
+cd financial_tracker
 docker-compose up --build
 ```
 ### Functionality check
