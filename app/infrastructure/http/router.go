@@ -1,17 +1,20 @@
 package http
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter(db *sql.DB) *gin.Engine {
 	router := gin.Default()
+	handler := NewHandler(db)
 
-	router.POST("/transaction", AddTransaction)
-	router.GET("/balance", GetBalance)
-	router.POST("/category", AddCategory)
-	router.GET("/categories", GetCategories)
-	router.GET("/transactions", GetTransactions)
+	router.POST("/transaction", handler.AddTransaction)
+	router.GET("/balance", handler.GetBalance)
+	router.POST("/category", handler.AddCategory)
+	router.GET("/categories", handler.GetCategories)
+	router.GET("/transactions", handler.GetTransactions)
 
 	return router
 }

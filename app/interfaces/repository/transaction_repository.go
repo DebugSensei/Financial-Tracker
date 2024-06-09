@@ -21,14 +21,18 @@ func (r *TransactionRepository) AddTransaction(trans transaction.Transaction) er
 
 func (r *TransactionRepository) GetBalance() (float64, error) {
 	var balance float64
-	query := `SELECT SUM(amount) FROM transactions`
+	query := `SELECT SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) as balance FROM transactions`
 	err := r.db.QueryRow(query).Scan(&balance)
 	return balance, err
 }
 
 func (r *TransactionRepository) GetTransactions() ([]transaction.TransactionWithCategory, error) {
 	var transactions []transaction.TransactionWithCategory
-	query := `SELECT t.date, t.amount, t.currency, t.type, c.name FROM transactions t JOIN categories c ON t.category_id = c.id`
+	query := `
+		SELECT t.date, t.amount, t.currency, t.type, c.name as category_name
+		FROM transactions t
+		JOIN categories c ON t.category_id = c.id
+	`
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err

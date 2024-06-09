@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"financial_tracker/app/infrastructure/db"
 	"financial_tracker/app/infrastructure/http"
+	"fmt"
 	"log"
 	"os"
 
@@ -28,14 +29,16 @@ func main() {
 	}
 
 	// Initialize the database
-	dbConn, err := sql.Open("postgres", dbConfig.ConnectionString())
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbConfig.Host, dbConfig.Port, dbConfig.User, dbConfig.Password, dbConfig.DBName)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
-	defer dbConn.Close()
+	defer db.Close()
 
 	// Set up the router and start the server
-	handler := http.NewHandler(dbConn)
+	handler := http.NewHandler(db)
 	router := handler.SetupRouter()
 	router.Run(":8080")
 }

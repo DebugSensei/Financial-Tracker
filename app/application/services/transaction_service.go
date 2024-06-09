@@ -1,22 +1,34 @@
 package services
 
 import (
-	"financial_tracker/app/interfaces/repository"
 	"financial_tracker/app/internal/domain/transaction"
+	"time"
 )
 
-// TransactionService struct
-type TransactionService struct {
-	TransactionRepo repository.TransactionRepository
+type TransactionRepository interface {
+	AddTransaction(trans transaction.Transaction) error
+	GetBalance() (float64, error)
+	GetTransactions() ([]transaction.TransactionWithCategory, error)
 }
 
-// NewTransactionService creates a new TransactionService
-func NewTransactionService(repo repository.TransactionRepository) *TransactionService {
+type TransactionService struct {
+	TransactionRepo TransactionRepository
+}
+
+func NewTransactionService(repo TransactionRepository) *TransactionService {
 	return &TransactionService{TransactionRepo: repo}
 }
 
-func (s *TransactionService) AddTransaction(trans transaction.Transaction) error {
-	return s.TransactionRepo.AddTransaction(trans)
+func (s *TransactionService) AddTransaction(amount float64, currency, tType string, categoryID int) (transaction.Transaction, error) {
+	trans := transaction.Transaction{
+		Date:       time.Now(),
+		Amount:     amount,
+		Currency:   currency,
+		Type:       tType,
+		CategoryID: categoryID,
+	}
+	err := s.TransactionRepo.AddTransaction(trans)
+	return trans, err
 }
 
 func (s *TransactionService) GetBalance() (float64, error) {

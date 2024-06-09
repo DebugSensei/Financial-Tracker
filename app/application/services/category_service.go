@@ -1,22 +1,26 @@
 package services
 
 import (
-	"financial_tracker/app/interfaces/repository"
 	"financial_tracker/app/internal/domain/category"
 )
 
-// CategoryService struct
-type CategoryService struct {
-	CategoryRepo repository.CategoryRepository
+type CategoryRepository interface {
+	AddCategory(cat category.Category) error
+	GetCategories() ([]category.Category, error)
 }
 
-// NewCategoryService creates a new CategoryService
-func NewCategoryService(repo repository.CategoryRepository) *CategoryService {
+type CategoryService struct {
+	CategoryRepo CategoryRepository
+}
+
+func NewCategoryService(repo CategoryRepository) *CategoryService {
 	return &CategoryService{CategoryRepo: repo}
 }
 
-func (s *CategoryService) AddCategory(cat category.Category) error {
-	return s.CategoryRepo.AddCategory(cat)
+func (s *CategoryService) AddCategory(name string) (category.Category, error) {
+	cat := category.Category{Name: name}
+	err := s.CategoryRepo.AddCategory(cat)
+	return cat, err
 }
 
 func (s *CategoryService) GetCategories() ([]category.Category, error) {

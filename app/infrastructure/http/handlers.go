@@ -11,18 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Handler struct holds required services for handler to function
-type Handler struct {
-	transactionService *services.TransactionService
-	categoryService    *services.CategoryService
+func NewHandler(db *sql.DB) *Handler {
+	return &Handler{DB: db}
 }
 
-// NewHandler returns a new handler
-func NewHandler(db *sql.DB) *Handler {
-	return &Handler{
-		transactionService: services.NewTransactionService(repository.NewTransactionRepository(db)),
-		categoryService:    services.NewCategoryService(repository.NewCategoryRepository(db)),
-	}
+type Handler struct {
+	DB *sql.DB
 }
 
 func (h *Handler) AddTransaction(c *gin.Context) {
@@ -32,16 +26,23 @@ func (h *Handler) AddTransaction(c *gin.Context) {
 		return
 	}
 
-	if err := h.transactionService.AddTransaction(input); err != nil {
+	transactionRepo := repository.NewTransactionRepository(h.DB)
+	service := services.NewTransactionService(transactionRepo)
+
+	trans, err := service.AddTransaction(input.Amount, input.Currency, input.Type, input.CategoryID)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Transaction added successfully!"})
+	c.JSON(http.StatusOK, gin.H{"message": "Transaction added successfully!", "transaction": trans})
 }
 
 func (h *Handler) GetBalance(c *gin.Context) {
-	balance, err := h.transactionService.GetBalance()
+	transactionRepo := repository.NewTransactionRepository(h.DB)
+	service := services.NewTransactionService(transactionRepo)
+
+	balance, err := service.GetBalance()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -57,16 +58,23 @@ func (h *Handler) AddCategory(c *gin.Context) {
 		return
 	}
 
-	if err := h.categoryService.AddCategory(input); err != nil {
+	categoryRepo := repository.NewCategoryRepository(h.DB)
+	service := services.NewCategoryService(categoryRepo)
+
+	cat, err := service.AddCategory(input.Name)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Category added successfully!"})
+	c.JSON(http.StatusOK, gin.H{"message": "Category added successfully!", "category": cat})
 }
 
 func (h *Handler) GetCategories(c *gin.Context) {
-	categories, err := h.categoryService.GetCategories()
+	categoryRepo := repository.NewCategoryRepository(h.DB)
+	service := services.NewCategoryService(categoryRepo)
+
+	categories, err := service.GetCategories()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -76,7 +84,10 @@ func (h *Handler) GetCategories(c *gin.Context) {
 }
 
 func (h *Handler) GetTransactions(c *gin.Context) {
-	transactions, err := h.transactionService.GetTransactions()
+	transactionRepo := repository.NewTransactionRepository(h.DB)
+	service := services.NewTransactionService(transactionRepo)
+
+	transactions, err := service.GetTransactions()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -87,10 +98,12 @@ func (h *Handler) GetTransactions(c *gin.Context) {
 
 func (h *Handler) SetupRouter() *gin.Engine {
 	router := gin.Default()
+
 	router.POST("/transactions", h.AddTransaction)
 	router.GET("/balance", h.GetBalance)
 	router.POST("/categories", h.AddCategory)
 	router.GET("/categories", h.GetCategories)
 	router.GET("/transactions", h.GetTransactions)
+
 	return router
 }
