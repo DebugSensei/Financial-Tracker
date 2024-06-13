@@ -1,5 +1,5 @@
 # Use the official Go image as a base image
-FROM golang:1.18-alpine
+FROM golang:1.22.4-alpine
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -12,6 +12,9 @@ RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
+
+# Copy the .env file
+COPY .env .env
 
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./app/cmd/api/

@@ -4,7 +4,7 @@ import (
 	"context"
 	"financial_tracker/app/config"
 	"financial_tracker/app/infrastructure/db"
-	"financial_tracker/app/infrastructure/http"
+	apphttp "financial_tracker/app/infrastructure/http"
 	"log"
 	"net/http"
 	"os"
@@ -36,7 +36,7 @@ func main() {
 	defer database.Close()
 
 	// Set up the router and start the server
-	handler := http.NewHandler(database)
+	handler := apphttp.NewHandler(database)
 	router := handler.SetupRouter()
 
 	srv := &http.Server{
@@ -46,7 +46,7 @@ func main() {
 
 	// Create a channel to listen for interrupt or terminate signals from the OS
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
+	signal.Notify(stop, os.Interrupt, os.Kill)
 
 	// Start the server in a goroutine
 	go func() {
