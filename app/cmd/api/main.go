@@ -1,12 +1,10 @@
 package main
 
 import (
-	"database/sql"
+	"financial_tracker/app/config"
 	"financial_tracker/app/infrastructure/db"
 	"financial_tracker/app/infrastructure/http"
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -19,26 +17,21 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	// Prepare DB Config
-	dbConfig := db.DBConfig{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   os.Getenv("DB_NAME"),
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
 	}
 
 	// Initialize the database
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbConfig.Host, dbConfig.Port, dbConfig.User, dbConfig.Password, dbConfig.DBName)
-	db, err := sql.Open("postgres", connStr)
+	database, err := db.Connect(cfg.Database)
 	if err != nil {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
-	defer db.Close()
+	defer database.Close()
 
 	// Set up the router and start the server
-	handler := http.NewHandler(db)
+	handler := http.NewHandler(database)
 	router := handler.SetupRouter()
 	router.Run(":8080")
 }
