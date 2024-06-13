@@ -1,11 +1,15 @@
-// This is a test comment to verify git commit under correct user
 package main
 
 import (
+	"context"
 	"financial_tracker/app/config"
 	"financial_tracker/app/infrastructure/db"
 	"financial_tracker/app/infrastructure/http"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -18,7 +22,7 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	// Load configuration
+	// Prepare Config
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
@@ -34,5 +38,35 @@ func main() {
 	// Set up the router and start the server
 	handler := http.NewHandler(database)
 	router := handler.SetupRouter()
-	router.Run(":8080")
+
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
+	// Create a channel to listen for interrupt or terminate signals from the OS
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+
+	// Start the server in a goroutine
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}()
+	log.Println("Server started on port 8080")
+
+	// Wait for a signal to gracefully shut down the server
+	<-stop
+	log.Println("Shutting down server...")
+
+	// Create a context with timeout to allow current operations to complete
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Error shutting down server: %v", err)
+	}
+
+	log.Println("Server gracefully stopped")
 }

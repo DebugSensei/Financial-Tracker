@@ -1,8 +1,12 @@
 package config
 
 import (
-	"os"
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	Database DatabaseConfig
+}
 
 type DatabaseConfig struct {
 	Host     string
@@ -12,18 +16,20 @@ type DatabaseConfig struct {
 	DBName   string
 }
 
-type Config struct {
-	Database DatabaseConfig
-}
-
 func LoadConfig() (*Config, error) {
-	return &Config{
-		Database: DatabaseConfig{
-			Host:     os.Getenv("DB_HOST"),
-			Port:     os.Getenv("DB_PORT"),
-			User:     os.Getenv("DB_USER"),
-			Password: os.Getenv("DB_PASSWORD"),
-			DBName:   os.Getenv("DB_NAME"),
-		},
-	}, nil
+	viper.SetConfigName("config")
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
+
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, err
+	}
+
+	return &cfg, nil
 }
