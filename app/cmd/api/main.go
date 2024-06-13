@@ -1,3 +1,4 @@
+// This is a test comment to verify git commit under correct user
 package main
 
 import (
