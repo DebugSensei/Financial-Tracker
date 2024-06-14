@@ -28,7 +28,7 @@ Financial Tracker is a Go language web application that allows you to track your
   - `transaction` - models and logic related to transactions.
     - `repository.go` - repository interface for transactions.
     - `transaction.go` - model for transactions.
-  - `app/ports` - handlers for API requests.
+  - `ports` - handlers for API requests.
     - `ports.go` - handlers for API requests.
 - `db/migrations` - database schema.
   - `schema.sql` - database schema.
