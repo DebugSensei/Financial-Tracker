@@ -32,4 +32,4 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./.env:/app/.env
+      - .env:/app/.env

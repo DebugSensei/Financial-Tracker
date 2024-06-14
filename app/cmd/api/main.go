@@ -4,7 +4,7 @@ import (
 	"context"
 	"financial_tracker/app/config"
 	"financial_tracker/app/infrastructure/db"
-	apphttp "financial_tracker/app/infrastructure/http"
+	"financial_tracker/app/ports"
 	"log"
 	"net/http"
 	"os"
@@ -36,7 +36,7 @@ func main() {
 	defer database.Close()
 
 	// Set up the router and start the server
-	handler := apphttp.NewHandler(database)
+	handler := ports.NewHandler(database) // исправляем использование NewHandler
 	router := handler.SetupRouter()
 
 	srv := &http.Server{

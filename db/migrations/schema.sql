@@ -28,3 +28,5 @@ INSERT INTO categories (name) VALUES
 ('Transport'),
 ('Entertainment'),
 ('Utilities');
+
+
